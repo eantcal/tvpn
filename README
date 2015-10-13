@@ -1,0 +1,38 @@
+-------------------------------------------------------------------------------
+THIS SOFTWARE IS PROVIDED BY THE AUTHORS AND CONTRIBUTORS ``AS IS'' AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ARE DISCLAIMED.  IN NO EVENT SHALL THE AUTHORS OR CONTRIBUTORS BE LIABLE
+FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
+OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
+OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+SUCH DAMAGE.
+-------------------------------------------------------------------------------
+
+See driver/README and vpn/README for more information
+
+TVPN project depends by the following source files:
+
+- vnddmgr.h header file used both by driver and applications (vnddconfig and vnddvpnd)
+
+In the vpn subdir:
+
+- crypter.h, des_crypt.h, des_crypt.cc -- DES encryption classes (wrapper around DES API)
+- csection.h                           -- csection_t class that wraps a pthread_mutex_t
+- ip_addr.h                            -- ip_address_t class implementation
+- mac_addr.h                           -- mac_address_t class implementation
+- thread.h, thread.cc                  -- thread class that wraps pthread_t API
+- udp_socket.h, udp_socket.cc          -- udp_socket class implementation (udp socket facility)
+- vndd_mgr.h, vndd_mgr.cc              -- mgr_t class implementation (manager for vnddmgr device driver)
+- vndd_tunnel.h, vndd_tunnel.cc        -- tunnelmgr_t and tunnel_t classes implementation (tunnel handling classes)
+- vndd_setup.h, vndd_setup.h           -- global configuration variables
+
+- vndd_vpnd.cc                         -- program (daemon) that manages the VPNs
+- vndd_config.cc                       -- tool to be used for configuring TVPN's virtual interfaces
+
+In the driver subdir:
+- vnddmgr.c                            -- implementation of vnddmgr kernel module
+
