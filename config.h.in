@@ -69,6 +69,15 @@
 /* Define to 1 if the system has the type `_Bool'. */
 #undef HAVE__BOOL
 
+/* Logger back dest file */
+#undef NU_LOGGER_BAK
+
+/* Logger config file */
+#undef NU_LOGGER_CFG
+
+/* Logger dest file */
+#undef NU_LOGGER_LOG
+
 /* Name of package */
 #undef PACKAGE
 

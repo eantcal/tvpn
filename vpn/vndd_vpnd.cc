@@ -1,7 +1,5 @@
 /*
- *  vndd_vpnd.cc
- *
- *  This program is part of TVPN.
+ *  This file is part of TVPN.
  *
  *  TVPN is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -22,7 +20,11 @@
  */
 
 
-// -----------------------------------------------------------------------------
+/* -------------------------------------------------------------------------- */
+
+#if HAVE_CONFIG_H
+# include <config.h>
+#endif
 
 #include "vndd_setup.h"
 #include "vndd_mgr.h"
@@ -58,9 +60,11 @@
 #include <thread>
 #include <string>
 #include <map>
+#include <memory>
 #include <iostream>
 
-// -----------------------------------------------------------------------------
+
+/* -------------------------------------------------------------------------- */
 
 static void signal_handler(int sig) 
 {
@@ -75,7 +79,7 @@ static void signal_handler(int sig)
 }
 
 
-// -----------------------------------------------------------------------------
+/* -------------------------------------------------------------------------- */
 
 static void daemonize(const std::string& loc_filename) 
 {
@@ -140,7 +144,7 @@ static void daemonize(const std::string& loc_filename)
 }
 
 
-// -----------------------------------------------------------------------------
+/* -------------------------------------------------------------------------- */
 
 static void wait_for_termination() 
 {
@@ -168,27 +172,27 @@ static void wait_for_termination()
 }
 
 
-// -----------------------------------------------------------------------------
+/* -------------------------------------------------------------------------- */
 
 static void usage( std::ostream & os ) 
 {
    static const std::string cdev ( VNDDMGR_CDEV_DIR "" VNDDMGR_CDEV_NAME );
 
    os << "vnndvpnd -tunnel <tunnel_param> " 
-         "[-tunnel <tunnel_param, ...>] [-cdev <cdevname>] [-daemonize]\n"
-         "Where\n\t<tunnel_param> = if_name local_ip local_port "
-         "remote_ip remote_port [-pwd <password>]\n\n"
-         "\tdefault <cdevname> = '" << cdev << "'\n";
+      "[-tunnel <tunnel_param, ...>] [-cdev <cdevname>] [-daemonize]\n"
+      "Where\n\t<tunnel_param> = if_name local_ip local_port "
+      "remote_ip remote_port [-pwd <password>]\n\n"
+      "\tdefault <cdevname> = '" << cdev << "'\n";
 }
 
 
-// -----------------------------------------------------------------------------
+/* -------------------------------------------------------------------------- */
 
 typedef std::pair< vndd::tunnel_t::tun_param_t, std::string > tunnel_info_t;  
 typedef std::map< std::string, tunnel_info_t > tunnel_config_param_t;
 
 
-// -----------------------------------------------------------------------------
+/* -------------------------------------------------------------------------- */
 
 static void parse_param(
       int argc, 
@@ -243,17 +247,17 @@ static void parse_param(
          }
 
          tunnel_info_t tinfo ( 
-            std::make_pair
-            ( vndd::tunnel_t::tun_param_t( 
-               src_ip, source_port, dst_ip, dest_port ), pwd));
+               std::make_pair
+               ( vndd::tunnel_t::tun_param_t( 
+                                             src_ip, source_port, dst_ip, dest_port ), pwd));
 
          std::pair<std::string, tunnel_info_t> tp(ifname, tinfo);
 
          std::cout << "vnddvpnd setting up "
-                   << src_ip << ":" << source_port << "<->" 
-                   << dst_ip << ":" << dest_port << " if='"
-                   << ifname << "'" << std::endl; 
-                  
+            << src_ip << ":" << source_port << "<->" 
+            << dst_ip << ":" << dest_port << " if='"
+            << ifname << "'" << std::endl; 
+
          if (! tunnel_param.insert( tp ).second ) 
          {
             std::cerr << "vnddvpnd failed: reuse of ifname not allowed\n";
@@ -271,7 +275,7 @@ static void parse_param(
 }
 
 
-// -----------------------------------------------------------------------------
+/* -------------------------------------------------------------------------- */
 
 int main(int argc, char* argv[]) 
 {
@@ -296,9 +300,9 @@ int main(int argc, char* argv[])
    }
 
    // Open vnddmgr device
-   std::auto_ptr<vndd::mgr_t> vnddmgr_obj ( new vndd::mgr_t( cdev ) );
+   std::shared_ptr<vndd::mgr_t> vnddmgr_obj ( new vndd::mgr_t( cdev ) );
 
-   if (! vnddmgr_obj.get()) 
+   if (! vnddmgr_obj ) 
    {
       std::cerr << "vnddvpnd failed: no enough memory\n";
       exit(1);
@@ -309,11 +313,11 @@ int main(int argc, char* argv[])
       int ver = vnddmgr_obj->get_driver_ver();
 
       std::cout << "Using vnddmgr module version " << 
-        (ver >> 8) << "." << (ver & 0xff) << std::endl;
+         (ver >> 8) << "." << (ver & 0xff) << std::endl;
    }
    else {
       std::cerr << "vnddvpnd failed: cannot open '%s'" 
-                << cdev << std::endl;
+         << cdev << std::endl;
       exit(1);
    }
 
@@ -332,15 +336,15 @@ int main(int argc, char* argv[])
          tmgr->add_tunnel( 
                i->first,          /* ifname */
                i->second.first,   /* tun_param_t */
-               vnddmgr_obj.get(), /* vnddmgr instance  */ 
+               vnddmgr_obj,       /* vnddmgr instance  */ 
                i->second.second   /* password 
-                                    (if empty tunnel won't be encrypted) */);
+                                     (if empty tunnel won't be encrypted) */);
       }
       catch (vndd::tunnel_t::excp_t & e) 
       {
          if ( ! vndd::setup_t::daemon_mode)
             std::cerr << "vnddvpnd failed to create tunnel instance for '" 
-                      << i->first << "'" << std::endl;
+               << i->first << "'" << std::endl;
          continue;
       }
    }
@@ -350,9 +354,12 @@ int main(int argc, char* argv[])
    {
       if ( ! vndd::setup_t::daemon_mode)
          std::cerr << "vnddvpnd failed: no tunnel instances specified" 
-                   << std::endl; 
+            << std::endl; 
       exit(1);
    }  
+
+
+   std::cout << "Logging on " << NU_LOGGER_LOG << std::endl;
 
    wait_for_termination();
 }

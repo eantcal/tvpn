@@ -99,7 +99,8 @@ vnddconfig_LINK = $(CXXLD) $(vnddconfig_CXXFLAGS) $(CXXFLAGS) \
 am_vnddvpnd_OBJECTS = vnddvpnd-vndd_vpnd.$(OBJEXT) \
 	vnddvpnd-vndd_mgr.$(OBJEXT) vnddvpnd-vndd_setup.$(OBJEXT) \
 	vnddvpnd-vndd_tunnel.$(OBJEXT) vnddvpnd-udp_socket.$(OBJEXT) \
-	vnddvpnd-des_crypt.$(OBJEXT) vnddvpnd-mac_addr.$(OBJEXT)
+	vnddvpnd-des_crypt.$(OBJEXT) vnddvpnd-mac_addr.$(OBJEXT) \
+	vnddvpnd-nu_logger.$(OBJEXT)
 vnddvpnd_OBJECTS = $(am_vnddvpnd_OBJECTS)
 vnddvpnd_LDADD = $(LDADD)
 vnddvpnd_LINK = $(CXXLD) $(vnddvpnd_CXXFLAGS) $(CXXFLAGS) \
@@ -342,7 +343,10 @@ vnddvpnd_SOURCES = \
    mac_addr.h \
    mac_addr.cc \
    ip_addr.h \
-   crypter.h
+   crypter.h \
+   nu_logger.cc \
+   nu_logger.h \
+   nu_tokenizer.h 
 
 vnddvpnd_AM_CXXFLAGS = ${vnddvpnd_CXXFLAGS}
 vnddvpnd_LDFLAGS = -pthread 
@@ -442,6 +446,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/vnddconfig-vndd_mgr.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/vnddvpnd-des_crypt.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/vnddvpnd-mac_addr.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/vnddvpnd-nu_logger.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/vnddvpnd-udp_socket.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/vnddvpnd-vndd_mgr.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/vnddvpnd-vndd_setup.Po@am__quote@
@@ -601,6 +606,20 @@ vnddvpnd-mac_addr.obj: mac_addr.cc
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='mac_addr.cc' object='vnddvpnd-mac_addr.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(vnddvpnd_CXXFLAGS) $(CXXFLAGS) -c -o vnddvpnd-mac_addr.obj `if test -f 'mac_addr.cc'; then $(CYGPATH_W) 'mac_addr.cc'; else $(CYGPATH_W) '$(srcdir)/mac_addr.cc'; fi`
+
+vnddvpnd-nu_logger.o: nu_logger.cc
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(vnddvpnd_CXXFLAGS) $(CXXFLAGS) -MT vnddvpnd-nu_logger.o -MD -MP -MF $(DEPDIR)/vnddvpnd-nu_logger.Tpo -c -o vnddvpnd-nu_logger.o `test -f 'nu_logger.cc' || echo '$(srcdir)/'`nu_logger.cc
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/vnddvpnd-nu_logger.Tpo $(DEPDIR)/vnddvpnd-nu_logger.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='nu_logger.cc' object='vnddvpnd-nu_logger.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(vnddvpnd_CXXFLAGS) $(CXXFLAGS) -c -o vnddvpnd-nu_logger.o `test -f 'nu_logger.cc' || echo '$(srcdir)/'`nu_logger.cc
+
+vnddvpnd-nu_logger.obj: nu_logger.cc
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(vnddvpnd_CXXFLAGS) $(CXXFLAGS) -MT vnddvpnd-nu_logger.obj -MD -MP -MF $(DEPDIR)/vnddvpnd-nu_logger.Tpo -c -o vnddvpnd-nu_logger.obj `if test -f 'nu_logger.cc'; then $(CYGPATH_W) 'nu_logger.cc'; else $(CYGPATH_W) '$(srcdir)/nu_logger.cc'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/vnddvpnd-nu_logger.Tpo $(DEPDIR)/vnddvpnd-nu_logger.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='nu_logger.cc' object='vnddvpnd-nu_logger.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(vnddvpnd_CXXFLAGS) $(CXXFLAGS) -c -o vnddvpnd-nu_logger.obj `if test -f 'nu_logger.cc'; then $(CYGPATH_W) 'nu_logger.cc'; else $(CYGPATH_W) '$(srcdir)/nu_logger.cc'; fi`
 
 # This directory's subdirectories are mostly independent; you can cd
 # into them and run 'make' without going through this Makefile.

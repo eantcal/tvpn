@@ -1,6 +1,4 @@
 /*
- *  vndd_mgr.h
- *
  *  This file is part of TVPN.
  *
  *  TVPN is free software; you can redistribute it and/or modify
@@ -22,20 +20,21 @@
  */
 
 
-// -----------------------------------------------------------------------------
+/* -------------------------------------------------------------------------- */
 
-#ifndef __VNDDMGRCLASS_H__
-#define __VNDDMGRCLASS_H__
+#ifndef __VNDD_MGR_H__
+#define __VNDD_MGR_H__
 
 
-// -----------------------------------------------------------------------------
+/* -------------------------------------------------------------------------- */
 
-extern "C" {
-#include "../vnddmgr.h"
+extern "C" 
+{
+   #include "../vnddmgr.h"
 }
 
 
-// -----------------------------------------------------------------------------
+/* -------------------------------------------------------------------------- */
 
 #include "mac_addr.h"
 #include "ip_addr.h"
@@ -47,78 +46,89 @@ extern "C" {
 #include <string>
 #include <unistd.h>
 
-// -----------------------------------------------------------------------------
+
+/* -------------------------------------------------------------------------- */
 
 namespace vndd
 {
-   class mgr_t 
-   {
-      public: 
-         using driver_version_t=int;
 
-      private:
-         std::string _if_name;
-         int _dev_fd = -1;
 
-         void _init_cdev_request(
-               cdev_request_t& irp, 
-               int cdev_request_cmd) const throw();
+/* -------------------------------------------------------------------------- */
 
-      public:
-         inline mgr_t(
-               const std::string& device_name = VNDDMGR_CDEV_DIR VNDDMGR_CDEV_NAME ) 
-            : _if_name(device_name) { }
+class mgr_t 
+{
+   public: 
+      using driver_version_t=int;
 
-         inline ~mgr_t() 
-         { 
-            if (! is_dev_fd_ok()) 
-               close_dev(); 
-         }
+   private:
+      std::string _if_name;
+      int _dev_fd = -1;
 
-         inline bool open_dev() throw () 
-         { 
-            return _dev_fd = ::open(_if_name.c_str(), O_RDWR), is_dev_fd_ok(); 
-         }
+      void _init_cdev_request(
+            cdev_request_t& irp, 
+            int cdev_request_cmd) const throw();
 
-         inline bool close_dev() throw() 
-         { 
-            int fd = _dev_fd; 
-            _dev_fd = 0;
+   public:
+      mgr_t(
+            const std::string& device_name = VNDDMGR_CDEV_DIR VNDDMGR_CDEV_NAME ) 
+         : _if_name(device_name) { }
 
-            return ::close(fd) > -1; 
-         }
+      ~mgr_t() 
+      { 
+         if (! is_dev_fd_ok()) 
+            close_dev(); 
+      }
 
-         inline bool is_dev_fd_ok() const throw() 
-         { 
-            return _dev_fd > -1; 
-         }
+      bool open_dev() throw () 
+      { 
+         return _dev_fd = ::open(_if_name.c_str(), O_RDWR), is_dev_fd_ok(); 
+      }
 
-         inline driver_version_t get_driver_ver() const throw() 
-         { 
-            return (driver_version_t) ioctl(_dev_fd, VNDDMGR_CDEV_IOGETVER);
-         }
+      bool close_dev() throw() 
+      { 
+         int fd = _dev_fd; 
+         _dev_fd = 0;
 
-         ssize_t add_if(
-               const std::string& ifname, 
-               const mac_addr_t& mac, 
-               int mtu) const throw();
+         return ::close(fd) > -1; 
+      }
 
-         ssize_t remove_if(const std::string& ifname) const throw();
+      bool is_dev_fd_ok() const throw() 
+      { 
+         return _dev_fd > -1; 
+      }
 
-         ssize_t announce_packet(
-               const std::string& ifname, 
-               const char* data, 
-               size_t datalen) const throw();
+      driver_version_t get_driver_ver() const throw() 
+      { 
+         return (driver_version_t) ioctl(_dev_fd, VNDDMGR_CDEV_IOGETVER);
+      }
 
-         ssize_t get_packet(
-               char* buf, 
-               size_t bufsize, 
-               std::string& ifname) const throw();
-   };
 
-}
+      ssize_t remove_if(const std::string& ifname) const throw();
 
-// -----------------------------------------------------------------------------
+      ssize_t add_if(
+         const std::string& ifname, 
+         const mac_addr_t& mac, 
+         int mtu) const throw();
 
-#endif // __VNDDMGRCLASS_H__
+
+      ssize_t announce_packet(
+         const std::string& ifname, 
+         const char* data, 
+         size_t datalen) const throw();
+
+      ssize_t get_packet(
+         char* buf, 
+         size_t bufsize, 
+         std::string& ifname) const throw();
+};
+
+
+/* -------------------------------------------------------------------------- */
+
+} // namespace vndd
+
+
+/* -------------------------------------------------------------------------- */
+
+#endif // __VNDD_MGR_H__
 

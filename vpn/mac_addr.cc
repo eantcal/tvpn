@@ -1,6 +1,4 @@
 /*
- *  mac_addr.cc
- *
  *  This file is part of TVPN.
  *
  *  vnddmgr is free software; you can redistribute it and/or modify
@@ -22,14 +20,14 @@
  */
 
 
-// -----------------------------------------------------------------------------
+/* -------------------------------------------------------------------------- */
 
 #include "mac_addr.h"
 
-// -----------------------------------------------------------------------------
 
+/* -------------------------------------------------------------------------- */
 
-std::string mac_addr_t :: _getpstr() const throw() 
+std::string mac_addr_t :: _getpstr() const noexcept
 {
    // reserve space for (at least) 2 digit + ":" + null termination char
    static const int LBUFDIGITSIZE=8; 
@@ -50,9 +48,9 @@ std::string mac_addr_t :: _getpstr() const throw()
 }
 
 
-// -----------------------------------------------------------------------------
+/* -------------------------------------------------------------------------- */
 
-mac_addr_t :: mac_addr_t(const std::string& mac) throw() 
+mac_addr_t :: mac_addr_t(const std::string& mac) noexcept
 {
    if (mac.size() != (sizeof("xx:xx:xx:xx:xx:xx")-1))
       return;
@@ -62,9 +60,9 @@ mac_addr_t :: mac_addr_t(const std::string& mac) throw()
 }
 
 
-// -----------------------------------------------------------------------------
+/* -------------------------------------------------------------------------- */
 
-mac_addr_t& mac_addr_t :: operator=(const mac_addr_t& mac_obj) throw() 
+mac_addr_t& mac_addr_t :: operator=(const mac_addr_t& mac_obj) noexcept
 {
    if (this != &mac_obj) 
       memcpy(&_macaddr[0], & mac_obj._macaddr[0], MAC_LEN);
@@ -73,9 +71,9 @@ mac_addr_t& mac_addr_t :: operator=(const mac_addr_t& mac_obj) throw()
 }
 
 
-// -----------------------------------------------------------------------------
+/* -------------------------------------------------------------------------- */
 
-char mac_addr_t :: operator[](size_t i) const throw() 
+char mac_addr_t :: operator[](size_t i) const noexcept
 {
    if (i>=0 && i<sizeof(_macaddr)) 
       return _macaddr[i];
@@ -84,9 +82,9 @@ char mac_addr_t :: operator[](size_t i) const throw()
 }
 
 
-// -----------------------------------------------------------------------------
+/* -------------------------------------------------------------------------- */
 
-char& mac_addr_t :: operator[](size_t i) throw() 
+char& mac_addr_t :: operator[](size_t i) noexcept
 {
    static char dummy = 0;
 
@@ -97,5 +95,5 @@ char& mac_addr_t :: operator[](size_t i) throw()
 }
 
 
-// -----------------------------------------------------------------------------
+/* -------------------------------------------------------------------------- */
 

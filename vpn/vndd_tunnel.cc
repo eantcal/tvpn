@@ -1,6 +1,4 @@
 /*
- *  vndd_tunnel.cc
- *
  *  This file is part of TVPN.
  *
  *  TVPN is free software; you can redistribute it and/or modify
@@ -22,21 +20,24 @@
  */
 
 
-// -----------------------------------------------------------------------------
+/* -------------------------------------------------------------------------- */
 
 #include "vndd_setup.h"
 #include "vndd_tunnel.h"
 #include "vndd_mgr.h"
 #include "des_crypt.h"
 #include "udp_socket.h"
+#include "nu_logger.h"
 
 #include <rpc/des_crypt.h>
 #include <cassert>
 #include <string>
 #include <sstream>
 #include <map>
+#include <memory>
 
-// -----------------------------------------------------------------------------
+
+/* -------------------------------------------------------------------------- */
 
 class crypt_buf_t 
 {
@@ -48,12 +49,12 @@ class crypt_buf_t
       crypt_buf_t() = delete;
       crypt_buf_t(const crypt_buf_t&) = delete;
       crypt_buf_t& operator=(const crypt_buf_t&) = delete;
-   
+
    public:
       using handle_t = std::unique_ptr< crypt_buf_t >;
 
       crypt_buf_t(const char* buf, size_t buflen, const char * keystr) 
-      throw ( des_exc_t ) : _orglen(buflen) 
+         throw ( des_exc_t ) : _orglen(buflen) 
       {
          assert(buf && buflen && keystr);      
 
@@ -90,22 +91,22 @@ class crypt_buf_t
 };
 
 
-// -----------------------------------------------------------------------------
+/* -------------------------------------------------------------------------- */
 
 class decrypt_buf_t 
 {
    private:
       size_t _orglen = -1;
       std::unique_ptr<char[]> _bufptr;
-      
+
       decrypt_buf_t() = delete;
       decrypt_buf_t(const decrypt_buf_t&) = delete;
       decrypt_buf_t& operator=(const decrypt_buf_t&) = delete;
-   
+
 
    public:
       using handle_t = std::unique_ptr<decrypt_buf_t>;
-   
+
       decrypt_buf_t(const char* buf, size_t buflen, const char * keystr) 
          throw ( des_exc_t )
          : _orglen(buflen) 
@@ -116,7 +117,7 @@ class decrypt_buf_t
                   keystr);      
 
             _bufptr = std::unique_ptr<char[]> ( new char [ buflen ] );
-   
+
             assert( _bufptr != nullptr );
 
             memcpy( _bufptr.get(), buf, buflen );
@@ -147,38 +148,38 @@ class decrypt_buf_t
 };
 
 
-// -----------------------------------------------------------------------------
+/* -------------------------------------------------------------------------- */
 
 void vndd::tunnel_t::_create_tunnel_ch() throw(excp_t) 
 {
    if ( ! _tunnel_socket.is_valid() )
       throw excp_t::INVALID_SOCKET_ERROR;
-      
+
    if ( ! _tunnel_socket.bind( _local_port, _local_ip,  
             true /* reuse addr && port */))
       throw excp_t::BINDING_SOCKET_ERROR;
 }
 
 
-// -----------------------------------------------------------------------------
+/* -------------------------------------------------------------------------- */
 
 vndd::tunnel_t::tunnel_t( const vndd::tunnel_t::tun_param_t& tp ) 
-throw(vndd::tunnel_t::excp_t) :
-  _local_ip(tp.local_ip()),
-  _local_port(tp.local_port()),
-  _remote_ip(tp.remote_ip()),
-  _remote_port(tp.remote_port())
+   throw(vndd::tunnel_t::excp_t) :
+      _local_ip(tp.local_ip()),
+      _local_port(tp.local_port()),
+      _remote_ip(tp.remote_ip()),
+      _remote_port(tp.remote_port())
 {
    _create_tunnel_ch();
 }
 
 
-// -----------------------------------------------------------------------------
+/* -------------------------------------------------------------------------- */
 
 int vndd::tunnelmgr_t::tunnel_recv_thread(
       const std::string& name, 
       vndd::tunnelmgr_t* tvm_ptr, 
-      vndd::mgr_t* vnddmgr_ptr, 
+      std::shared_ptr<vndd::mgr_t> vnddmgr_ptr, 
       const std::string& keystr)
 {
    assert ( tvm_ptr );
@@ -233,7 +234,7 @@ int vndd::tunnelmgr_t::tunnel_recv_thread(
             { 
                decrypt_buf_t::handle_t decrypted_buf = 
                   decrypt_buf_t::handle_t ( 
-                     new decrypt_buf_t(buf, rbytescnt, keystr.c_str()));
+                        new decrypt_buf_t(buf, rbytescnt, keystr.c_str()));
 
                assert( decrypted_buf != nullptr );
 
@@ -247,7 +248,7 @@ int vndd::tunnelmgr_t::tunnel_recv_thread(
             }
 
             if ( ! vndd::setup_t::daemon_mode)
-               printf("%s announced packet from %s:%i to ndd %s\n",
+               NU_DBGOUT("%s announced packet from %s:%i to ndd %s\n",
                      __FUNCTION__, 
                      std::string( remote_ip ).c_str(), 
                      remote_port & 0xffff, name.c_str()
@@ -256,7 +257,7 @@ int vndd::tunnelmgr_t::tunnel_recv_thread(
          else 
          {
             if ( ! vndd::setup_t::daemon_mode)
-               fprintf(stderr, 
+               NU_DBGERR(
                      "%s failed receiving packet from "
                      "tunnel for ndd %s\n",
                      __FUNCTION__, name.c_str() 
@@ -279,12 +280,12 @@ int vndd::tunnelmgr_t::tunnel_recv_thread(
 }
 
 
-// -----------------------------------------------------------------------------
+/* -------------------------------------------------------------------------- */
 
 int vndd::tunnelmgr_t::tunnel_xmit_thread(
       const std::string& keystr, 
       vndd::tunnelmgr_t* tvm_ptr, 
-      vndd::mgr_t* vnddmgr_ptr )
+      std::shared_ptr<vndd::mgr_t> vnddmgr_ptr)
 {
    assert ( tvm_ptr );
    assert ( vnddmgr_ptr );
@@ -315,7 +316,7 @@ int vndd::tunnelmgr_t::tunnel_xmit_thread(
                   tunnel.get_remote_port();
 
                if ( ! vndd::setup_t::daemon_mode)
-                  printf("%s: receiving packet from ndd %s, tx to %s:%i\n",
+                  NU_DBGOUT("%s: receiving packet from ndd %s, tx to %s:%i\n",
                         __FUNCTION__, if_name.c_str(), 
                         std::string( remote_ip ).c_str(), remote_port & 0xffff
                         );
@@ -325,15 +326,15 @@ int vndd::tunnelmgr_t::tunnel_xmit_thread(
                if (! keystr.empty()) 
                {
                   crypt_buf_t::handle_t crypted_buf( 
-                     new crypt_buf_t (buf, buflen, keystr.c_str()));
+                        new crypt_buf_t (buf, buflen, keystr.c_str()));
 
                   // Crypted packet is sent across the tunnel to the remote peer
                   bsent = tunnel.tunnel_socket().
                      sendto(
-                        crypted_buf->get_buf(), 
-                        crypted_buf->get_buf_len(), 
-                        remote_ip, 
-                        remote_port );
+                           crypted_buf->get_buf(), 
+                           crypted_buf->get_buf_len(), 
+                           remote_ip, 
+                           remote_port );
                } //..if
                else 
                {
@@ -345,7 +346,7 @@ int vndd::tunnelmgr_t::tunnel_xmit_thread(
                if ( bsent<=0 ) 
                {
                   if ( ! vndd::setup_t::daemon_mode)
-                     fprintf(stderr, "%s: tunnel.tunnel_socket().sendto "
+                     NU_DBGERR("%s: tunnel.tunnel_socket().sendto "
                            "error sending sending to %s:%i\n",
                            __FUNCTION__, std::string( remote_ip ).c_str(),
                            remote_port & 0xffff
@@ -374,12 +375,12 @@ int vndd::tunnelmgr_t::tunnel_xmit_thread(
 }
 
 
-// -----------------------------------------------------------------------------
+/* -------------------------------------------------------------------------- */
 
 bool vndd::tunnelmgr_t::add_tunnel(
       const std::string& ifname, 
       const vndd::tunnel_t::tun_param_t& tp,
-      vndd::mgr_t* vnddmgr_ptr,
+      std::shared_ptr<vndd::mgr_t> vnddmgr_ptr,
       const std::string& password) 
 {
    assert ( vnddmgr_ptr );
@@ -399,7 +400,7 @@ bool vndd::tunnelmgr_t::add_tunnel(
 
    if (! _dev2tunnel.insert ( make_pair(ifname, htunnel) ).second ) 
    {
-       // clean up allocated resources
+      // clean up allocated resources
       _rpeer2dev.erase ( std::make_pair (ip, port) );
       return false;
    }
@@ -410,7 +411,9 @@ bool vndd::tunnelmgr_t::add_tunnel(
       _tunnel_xmit_thread.reset ( 
             new std::thread(
                &vndd::tunnelmgr_t::tunnel_xmit_thread,
-               password, this, vnddmgr_ptr ));
+               password, 
+               this, 
+               vnddmgr_ptr ));
 
       if ( _tunnel_xmit_thread == nullptr )
       {
@@ -423,8 +426,8 @@ bool vndd::tunnelmgr_t::add_tunnel(
 
    // Create a receiver thread for this tunnel instance
    std::thread recv_thread(  
-            &vndd::tunnelmgr_t::tunnel_recv_thread,
-            ifname, this, vnddmgr_ptr , password ); 
+         &vndd::tunnelmgr_t::tunnel_recv_thread,
+         ifname, this, vnddmgr_ptr , password ); 
 
    recv_thread.detach();
 
@@ -432,10 +435,10 @@ bool vndd::tunnelmgr_t::add_tunnel(
 }
 
 
-// -----------------------------------------------------------------------------
+/* -------------------------------------------------------------------------- */
 
-vndd::tunnel_t& vndd::tunnelmgr_t::get_tunnel_instance(
-      const std::string& ifname) throw(vndd::tunnelmgr_t::excp_t)
+   vndd::tunnel_t& vndd::tunnelmgr_t::get_tunnel_instance(
+         const std::string& ifname) throw(vndd::tunnelmgr_t::excp_t)
 { 
    lock_guard_t with ( _lock );
 
@@ -448,7 +451,7 @@ vndd::tunnel_t& vndd::tunnelmgr_t::get_tunnel_instance(
 }
 
 
-// -----------------------------------------------------------------------------
+/* -------------------------------------------------------------------------- */
 
 bool vndd::tunnelmgr_t::remove_tunnel(const std::string& ifname) throw() 
 {
@@ -468,10 +471,10 @@ bool vndd::tunnelmgr_t::remove_tunnel(const std::string& ifname) throw()
       i->second->notify_remove_req_pending();
 
       auto tunnel_instance = i->second;
-      
+
       // wait until recv thread terminates execution
       tunnel_instance->lock();
-      
+
       //remove the tunnel instance
       _dev2tunnel.erase( ifname );
 
@@ -484,6 +487,6 @@ bool vndd::tunnelmgr_t::remove_tunnel(const std::string& ifname) throw()
 }
 
 
-// -----------------------------------------------------------------------------
+/* -------------------------------------------------------------------------- */
 
 

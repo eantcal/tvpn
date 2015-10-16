@@ -1,9 +1,7 @@
 /*
- *  crypter.h
- *
  *  This file is part of TVPN.
  *
- *  vnddmgr is free software; you can redistribute it and/or modify
+ *  TVPN is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation; either version 2 of the License, or
  *  (at your option) any later version.
@@ -24,38 +22,39 @@
 #ifndef __CRYPTER_H__
 #define __CRYPTER_H__
 
-// ----------------------------------------------------------------------------
+
+/* -------------------------------------------------------------------------- */
 
 #include <string>
 
 
-// ----------------------------------------------------------------------------
+/* -------------------------------------------------------------------------- */
 
 class crypter_key_t 
 {
    public:
-      virtual std::string operator()() const throw() = 0;
-      virtual ~crypter_key_t() throw() {}
+      virtual std::string operator()() const noexcept = 0;
+      virtual ~crypter_key_t() noexcept {}
 
-      virtual explicit operator char*() const throw() = 0;  
-      virtual explicit operator const char*() const throw() = 0;  
+      virtual explicit operator char*() const noexcept = 0;  
+      virtual explicit operator const char*() const noexcept = 0;  
 };
 
 
-// ----------------------------------------------------------------------------
+/* -------------------------------------------------------------------------- */
 
 class crypter_exc_t 
 { 
    public:
       using error_code_t = int;
 
-      virtual const std::string& get_description() const throw () = 0;
-      virtual error_code_t get_error_code() const throw () = 0;
-      virtual ~crypter_exc_t() throw() {}
+      virtual const std::string& get_description() const noexcept = 0;
+      virtual error_code_t get_error_code() const noexcept = 0;
+      virtual ~crypter_exc_t() noexcept {}
 };
 
 
-// ----------------------------------------------------------------------------
+/* -------------------------------------------------------------------------- */
 
 class crypter_t 
 { 
@@ -70,11 +69,11 @@ class crypter_t
             block_ptr_t block_ptr, 
             size_t block_size ) const throw (crypter_exc_t) = 0;
 
-      virtual ~crypter_t() throw() {}
+      virtual ~crypter_t() noexcept {}
 };
 
 
-// ----------------------------------------------------------------------------
+/* -------------------------------------------------------------------------- */
 
 #endif // ... __CRYPTER_H__
 

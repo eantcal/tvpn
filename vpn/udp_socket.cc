@@ -1,6 +1,4 @@
 /*
- *  udp_socket.cc
- *
  *  This file is part of TVPN.
  *
  *  TVPN is free software; you can redistribute it and/or modify
@@ -22,7 +20,7 @@
  */
 
 
-// -----------------------------------------------------------------------------
+/* -------------------------------------------------------------------------- */
 
 #include "udp_socket.h"
 
@@ -41,11 +39,11 @@
 #include <assert.h>
 
 
-// -----------------------------------------------------------------------------
+/* -------------------------------------------------------------------------- */
 
 void udp_socket_t::_format_sock_addr(sockaddr_in & sa, 
       const ip_address_t& addr,
-      port_t port) 
+      port_t port) noexcept
 {
    memset(&sa, 0, sizeof(sa));
 
@@ -55,60 +53,64 @@ void udp_socket_t::_format_sock_addr(sockaddr_in & sa,
 }
 
 
-// -----------------------------------------------------------------------------
+/* -------------------------------------------------------------------------- */
 
-udp_socket_t::udp_socket_t() throw() : _sock(::socket(AF_INET, SOCK_DGRAM, 0))
+udp_socket_t::udp_socket_t() noexcept : 
+   _sock(::socket(AF_INET, SOCK_DGRAM, 0))
 {
    assert( _sock > -1 );
 }
 
 
-// -----------------------------------------------------------------------------
+/* -------------------------------------------------------------------------- */
 
-udp_socket_t::~udp_socket_t() throw() 
+udp_socket_t::~udp_socket_t() noexcept
 {
    close();
 }
 
 
-// -----------------------------------------------------------------------------
+/* -------------------------------------------------------------------------- */
 
-int udp_socket_t::sendto(const char* buf,
+int udp_socket_t::sendto(
+      const char* buf,
       int len, 
       const ip_address_t& ip,
       port_t port, 
-      int flags) const throw() 
+      int flags) const noexcept
 {
    struct sockaddr_in remote_host = {0}; 
 
    _format_sock_addr(remote_host, ip, port);
 
    int bytes_sent = ::sendto(get_sd(),
-         buf, len,
-         flags,
-         (struct sockaddr*) &remote_host,
-         sizeof(remote_host));
+      buf, len,
+      flags,
+      (struct sockaddr*) &remote_host,
+      sizeof(remote_host));
 
    return bytes_sent;
 }
 
 
-// -----------------------------------------------------------------------------
+/* -------------------------------------------------------------------------- */
 
-int udp_socket_t::recvfrom(char *buf, 
+int udp_socket_t::recvfrom(
+      char *buf, 
       int len,
       ip_address_t& src_addr,
       port_t& src_port,
-      int flags) const throw() 
+      int flags) const noexcept
 
 {
    struct sockaddr_in source; 
    socklen_t sourcelen = sizeof(source);
    memset(&source, 0, sizeof(source));
 
-   int recv_result = ::recvfrom(get_sd(), buf, len, 
-         flags, (struct sockaddr*)&source, 
-         &sourcelen);
+   int recv_result = ::recvfrom(
+      get_sd(), buf, len, 
+      flags, (struct sockaddr*)&source, 
+      &sourcelen);
 
    src_addr = ip_address_t(htonl(source.sin_addr.s_addr));
    src_port = port_t(htons(source.sin_port));
@@ -117,9 +119,9 @@ int udp_socket_t::recvfrom(char *buf,
 }
 
 
-// -----------------------------------------------------------------------------
+/* -------------------------------------------------------------------------- */
 
-udp_socket_t::pollst_t udp_socket_t::poll(struct timeval& timeout) const throw() 
+udp_socket_t::pollst_t udp_socket_t::poll(struct timeval& timeout) const noexcept
 {
    fd_set readMask;
    FD_ZERO(&readMask);
@@ -134,27 +136,20 @@ udp_socket_t::pollst_t udp_socket_t::poll(struct timeval& timeout) const throw()
    while (! FD_ISSET(_sock, &readMask) && nd > 0);
 
    if (nd <= 0) 
-   {
-      if (nd == 0) 
-      {
-         return pollst_t::TIMEOUT_EXPIRED; 
-      }
-
-      if (nd < 0) 
-      {
-         return pollst_t::ERROR_IN_COMMUNICATION;
-      }
-   }
+      return nd == 0 ? 
+         pollst_t::TIMEOUT_EXPIRED :
+         pollst_t::ERROR_IN_COMMUNICATION;
 
    return pollst_t::RECEIVING_DATA;
 }
 
 
-// -----------------------------------------------------------------------------
+/* -------------------------------------------------------------------------- */
 
-bool udp_socket_t::bind(port_t& port,
-      const ip_address_t& ip,
-      bool reuse_addr) const throw()
+bool udp_socket_t::bind(
+   port_t& port,
+   const ip_address_t& ip,
+   bool reuse_addr) const noexcept
 {
    struct sockaddr_in sin = {0};
    socklen_t address_len = 0;
@@ -163,11 +158,12 @@ bool udp_socket_t::bind(port_t& port,
    {
       int bool_val = 1;
 
-      setsockopt(get_sd(), 
-            SOL_SOCKET, 
-            SO_REUSEADDR, 
-            (const char*) &bool_val, 
-            sizeof(bool_val));
+      setsockopt(
+         get_sd(), 
+         SOL_SOCKET, 
+         SO_REUSEADDR, 
+         (const char*) &bool_val, 
+         sizeof(bool_val));
    }
 
    _format_sock_addr(sin, ip, port);
@@ -175,7 +171,8 @@ bool udp_socket_t::bind(port_t& port,
    int sock = get_sd();
    int err_code = ::bind (sock, (struct sockaddr *) &sin, sizeof(sin));
 
-   if (port == 0) {
+   if (port == 0) 
+   {
       address_len = sizeof(sin);
       getsockname(sock, (struct sockaddr *) &sin, &address_len);
       port = ntohs(sin.sin_port);
@@ -185,9 +182,9 @@ bool udp_socket_t::bind(port_t& port,
 }
 
 
-// -----------------------------------------------------------------------------
+/* -------------------------------------------------------------------------- */
 
-bool udp_socket_t::close() throw() 
+bool udp_socket_t::close() noexcept
 {
    int sock = _sock;
    _sock = -1;
@@ -196,5 +193,5 @@ bool udp_socket_t::close() throw()
 }
 
 
-// -----------------------------------------------------------------------------
+/* -------------------------------------------------------------------------- */
 

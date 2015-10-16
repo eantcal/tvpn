@@ -36,7 +36,10 @@ vnddvpnd_SOURCES = \
    mac_addr.h \
    mac_addr.cc \
    ip_addr.h \
-   crypter.h
+   crypter.h \
+   nu_logger.cc \
+   nu_logger.h \
+   nu_tokenizer.h 
 
 
 vnddvpnd_AM_CXXFLAGS = ${vnddvpnd_CXXFLAGS}

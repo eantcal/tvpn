@@ -22,7 +22,7 @@
  */
 
 
-// -----------------------------------------------------------------------------
+/* -------------------------------------------------------------------------- */ 
 
 #include "des_crypt.h"
 #include <cassert>
@@ -30,9 +30,9 @@
 #include <memory.h>
 
 
-// -----------------------------------------------------------------------------
+/* -------------------------------------------------------------------------- */ 
 
-des_key_t::des_key_t( const std::string& key ) throw() 
+des_key_t::des_key_t( const std::string& key ) noexcept
 {
    memset(&_key[0], 0, _key.size());
    strncpy( &_key[0], key.c_str(), KEY_LEN );
@@ -40,18 +40,18 @@ des_key_t::des_key_t( const std::string& key ) throw()
 }
 
 
-// -----------------------------------------------------------------------------
+/* -------------------------------------------------------------------------- */ 
 
-std::string des_key_t::operator()() const throw() 
+std::string des_key_t::operator()() const noexcept
 {
    std::string ret(&_key[0]);
    return ret;
 }
 
 
-// -----------------------------------------------------------------------------
+/* -------------------------------------------------------------------------- */ 
 
-const std::string& des_exc_t::get_description() const throw () 
+const std::string& des_exc_t::get_description() const noexcept
 {
    static const std::string _desc[] =
    {
@@ -77,18 +77,18 @@ const std::string& des_exc_t::get_description() const throw ()
 }
 
 
-// -----------------------------------------------------------------------------
+/* -------------------------------------------------------------------------- */ 
 
 des_exc_t::error_code_t 
-des_exc_t::get_error_code() const throw () 
+des_exc_t::get_error_code() const noexcept
 {
    return _excp_code;
 }
 
 
-// -----------------------------------------------------------------------------
+/* -------------------------------------------------------------------------- */ 
 
-const des_t& des_t::get_instance() throw() 
+const des_t& des_t::get_instance() noexcept
 {
    if (! _des_instance ) 
       _des_instance = new des_t();
@@ -99,7 +99,7 @@ const des_t& des_t::get_instance() throw()
 }
 
 
-// -----------------------------------------------------------------------------
+/* -------------------------------------------------------------------------- */ 
 
 void des_t::operator() (
       const method_t& method,
@@ -128,7 +128,7 @@ void des_t::operator() (
 }
 
 
-// -----------------------------------------------------------------------------
+/* -------------------------------------------------------------------------- */ 
 
 des_t* des_t::_des_instance = 0;
 

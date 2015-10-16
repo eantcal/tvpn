@@ -1,7 +1,5 @@
 /*
- *  vndd_config.cc
- *
- *  This program is part of TVPN.
+ *  This file is part of TVPN.
  *
  *  TVPN is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -17,12 +15,12 @@
  *  along with TVPN; if not, write to the Free Software
  *  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  US
  *
- *  Author:	Antonino Calderone, <acaldmail@gmail.com>
+ *  Author: Antonino Calderone, <acaldmail@gmail.com>
  *
  */
 
 
-// -----------------------------------------------------------------------------
+/* -------------------------------------------------------------------------- */
 
 #include "vndd_mgr.h"
 #include "mac_addr.h"
@@ -53,18 +51,19 @@
 #include <memory> 
 #include <iostream>
 
-// -----------------------------------------------------------------------------
+
+/* -------------------------------------------------------------------------- */
 
 enum class request_t { NO_REQUEST, ADD_REQUEST, REMOVE_REQUEST };
 
 
-// -----------------------------------------------------------------------------
+/* -------------------------------------------------------------------------- */
 
 #define DEFAULT_MTU 1500
 #define DEFAULT_MAC  "00:00:00:00:00:00"
 
 
-// -----------------------------------------------------------------------------
+/* -------------------------------------------------------------------------- */
 
 static void usage( std::ostream& os ) 
 {
@@ -79,7 +78,7 @@ static void usage( std::ostream& os )
 }
 
 
-// -----------------------------------------------------------------------------
+/* -------------------------------------------------------------------------- */
 
 request_t parse_param(int argc, 
                 char* argv[], 
@@ -103,7 +102,11 @@ request_t parse_param(int argc,
 
    if (request == request_t::NO_REQUEST) 
    {
-      std::cerr << argv[0] << ": 'add' or 'remove' not specified" << std::endl;
+      std::cerr 
+         << argv[0] 
+         << ": 'add' or 'remove' not specified" 
+         << std::endl;
+
       usage( std::cerr );
       exit(1);
    }
@@ -128,8 +131,13 @@ request_t parse_param(int argc,
          mtu = atoi(argv[++i]) & 0xffff;
       else 
       {
-         std::cerr << argv[0] << ": syntax error (cdev, mac or mtu missing)" << std::endl;
+         std::cerr 
+            << argv[0] 
+            << ": syntax error (cdev, mac or mtu missing)" 
+            << std::endl;
+
          usage( std::cerr );
+
          exit(1);
       }      
 
@@ -139,7 +147,7 @@ request_t parse_param(int argc,
 }
 
 
-// -----------------------------------------------------------------------------
+/* -------------------------------------------------------------------------- */
 
 int main(int argc, char* argv[]) 
 {
@@ -244,5 +252,5 @@ int main(int argc, char* argv[])
 }
 
 
-// -----------------------------------------------------------------------------
+/* -------------------------------------------------------------------------- */
 

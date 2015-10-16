@@ -2,9 +2,13 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ([2.69])
-AC_INIT([tvpn], [1.3], [acaldmail@gmail.com])
+AC_INIT([tvpn], [1.4], [acaldmail@gmail.com])
 AM_INIT_AUTOMAKE
 AC_CONFIG_HEADERS([config.h])
+
+AC_DEFINE([NU_LOGGER_CFG], ["/var/log/tvpnlogger.cfg"], [Logger config file])
+AC_DEFINE([NU_LOGGER_LOG], ["/var/log/tvpn.log"],       [Logger dest file])
+AC_DEFINE([NU_LOGGER_BAK], ["/var/log/tvpn.log.bak"],   [Logger back dest file])
 
 # Checks for programs.
 AC_PROG_CXX

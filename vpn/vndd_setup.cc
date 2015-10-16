@@ -1,6 +1,4 @@
 /*
- *  vndd_setup.cc
- *
  *  This file is part of TVPN.
  *
  *  TVPN is free software; you can redistribute it and/or modify
@@ -22,19 +20,24 @@
  */
 
 
-// -----------------------------------------------------------------------------
+/* -------------------------------------------------------------------------- */
 
 #include "vndd_setup.h"
 
-// -----------------------------------------------------------------------------
+
+/* -------------------------------------------------------------------------- */
 
 #ifndef VNDD_LOCK_FILENAME
-#define VNDD_LOCK_FILENAME "vnddvpnd.pid"
+   #define VNDD_LOCK_FILENAME "vnddvpnd.pid"
 #endif // VNDD_DAEMON_PID_FILE
+
+
+/* -------------------------------------------------------------------------- */
 
 bool vndd::setup_t::daemon_mode = false;
 const std::string vndd::setup_t::lockfilename ( VNDD_LOCK_FILENAME );
 
-// -----------------------------------------------------------------------------
+
+/* -------------------------------------------------------------------------- */
 
 
