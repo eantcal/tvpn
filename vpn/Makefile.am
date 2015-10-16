@@ -39,7 +39,11 @@ vnddvpnd_SOURCES = \
    crypter.h \
    nu_logger.cc \
    nu_logger.h \
-   nu_tokenizer.h 
+   nu_tokenizer.h \
+   nu_console.h \
+   nu_console.cc \
+   nu_terminal.h \
+   nu_terminal.cc
 
 
 vnddvpnd_AM_CXXFLAGS = ${vnddvpnd_CXXFLAGS}

@@ -15,7 +15,7 @@
  *  along with TVPN; if not, write to the Free Software
  *  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  US
  *
- *  Author:	Antonino Calderone, <acaldmail@gmail.com>
+ *  Author: Antonino Calderone, <acaldmail@gmail.com>
  *
  */
 
@@ -30,6 +30,7 @@
 #include "vndd_mgr.h"
 #include "vndd_tunnel.h"
 #include "udp_socket.h"
+#include "nu_console.h"
 
 #include <sys/ioctl.h>
 #include <sys/types.h>
@@ -62,6 +63,20 @@
 #include <map>
 #include <memory>
 #include <iostream>
+
+
+/* -------------------------------------------------------------------------- */
+
+static void usage( std::ostream & os ) 
+{
+   static const std::string cdev ( VNDDMGR_CDEV_DIR "" VNDDMGR_CDEV_NAME );
+
+   os << "vnndvpnd -tunnel <tunnel_param> " 
+      "[-tunnel <tunnel_param, ...>] [-cdev <cdevname>] [-daemonize]\n"
+      "Where\n\t<tunnel_param> = if_name local_ip local_port "
+      "remote_ip remote_port [-pwd <password>]\n\n"
+      "\tdefault <cdevname> = '" << cdev << "'\n";
+}
 
 
 /* -------------------------------------------------------------------------- */
@@ -155,9 +170,9 @@ static void wait_for_termination()
    sigaddset(&newmask, SIGTERM);
 
    sigprocmask(SIG_BLOCK, &newmask, NULL); 
-
+   
    while (1) 
-   { 
+   {
       int rcvd_sig = sigwaitinfo(&newmask, NULL);
 
       if (rcvd_sig == -1) 
@@ -174,16 +189,52 @@ static void wait_for_termination()
 
 /* -------------------------------------------------------------------------- */
 
-static void usage( std::ostream & os ) 
+class cli_t
 {
-   static const std::string cdev ( VNDDMGR_CDEV_DIR "" VNDDMGR_CDEV_NAME );
+   public:
+      cli_t() 
+      {
+         sigset_t newmask;
+         sigemptyset(&newmask);
+         sigaddset(&newmask, SIGINT);
+         sigaddset(&newmask, SIGHUP);
+         sigaddset(&newmask, SIGTERM);
 
-   os << "vnndvpnd -tunnel <tunnel_param> " 
-      "[-tunnel <tunnel_param, ...>] [-cdev <cdevname>] [-daemonize]\n"
-      "Where\n\t<tunnel_param> = if_name local_ip local_port "
-      "remote_ip remote_port [-pwd <password>]\n\n"
-      "\tdefault <cdevname> = '" << cdev << "'\n";
-}
+         sigprocmask(SIG_BLOCK, &newmask, NULL); 
+      }
+
+      void help()
+      {
+         std::cout << "help\tThis help" << std::endl;
+         std::cout << "quit\tQuit program" << std::endl;
+         std::cout << "usage\tProgram command line usage" << std::endl;
+      }
+
+      void run()
+      {
+         nu::console_t console;
+
+         while (1) 
+         {
+            std::cout << ">";
+            std::cout.flush();
+
+            std::string cmd = console.input_line();
+
+            if (cmd == "quit")
+               return;
+            else if (cmd == "help")
+               help();
+            else if (cmd == "usage")
+               usage(std::cout);
+            else if (!cmd.empty())
+               std::cout << "Unknown command" << std::endl;
+
+            std::cout.flush();
+         }
+      }
+};
+
 
 
 /* -------------------------------------------------------------------------- */
@@ -361,6 +412,16 @@ int main(int argc, char* argv[])
 
    std::cout << "Logging on " << NU_LOGGER_LOG << std::endl;
 
-   wait_for_termination();
+   if (must_daemonize)
+   {
+      wait_for_termination();
+   }
+   else
+   {
+      cli_t cli;
+      cli.run();
+
+      _exit(0);
+   }
 }
 

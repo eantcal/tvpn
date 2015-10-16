@@ -100,7 +100,8 @@ am_vnddvpnd_OBJECTS = vnddvpnd-vndd_vpnd.$(OBJEXT) \
 	vnddvpnd-vndd_mgr.$(OBJEXT) vnddvpnd-vndd_setup.$(OBJEXT) \
 	vnddvpnd-vndd_tunnel.$(OBJEXT) vnddvpnd-udp_socket.$(OBJEXT) \
 	vnddvpnd-des_crypt.$(OBJEXT) vnddvpnd-mac_addr.$(OBJEXT) \
-	vnddvpnd-nu_logger.$(OBJEXT)
+	vnddvpnd-nu_logger.$(OBJEXT) vnddvpnd-nu_console.$(OBJEXT) \
+	vnddvpnd-nu_terminal.$(OBJEXT)
 vnddvpnd_OBJECTS = $(am_vnddvpnd_OBJECTS)
 vnddvpnd_LDADD = $(LDADD)
 vnddvpnd_LINK = $(CXXLD) $(vnddvpnd_CXXFLAGS) $(CXXFLAGS) \
@@ -346,7 +347,11 @@ vnddvpnd_SOURCES = \
    crypter.h \
    nu_logger.cc \
    nu_logger.h \
-   nu_tokenizer.h 
+   nu_tokenizer.h \
+   nu_console.h \
+   nu_console.cc \
+   nu_terminal.h \
+   nu_terminal.cc
 
 vnddvpnd_AM_CXXFLAGS = ${vnddvpnd_CXXFLAGS}
 vnddvpnd_LDFLAGS = -pthread 
@@ -446,7 +451,9 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/vnddconfig-vndd_mgr.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/vnddvpnd-des_crypt.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/vnddvpnd-mac_addr.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/vnddvpnd-nu_console.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/vnddvpnd-nu_logger.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/vnddvpnd-nu_terminal.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/vnddvpnd-udp_socket.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/vnddvpnd-vndd_mgr.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/vnddvpnd-vndd_setup.Po@am__quote@
@@ -620,6 +627,34 @@ vnddvpnd-nu_logger.obj: nu_logger.cc
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='nu_logger.cc' object='vnddvpnd-nu_logger.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(vnddvpnd_CXXFLAGS) $(CXXFLAGS) -c -o vnddvpnd-nu_logger.obj `if test -f 'nu_logger.cc'; then $(CYGPATH_W) 'nu_logger.cc'; else $(CYGPATH_W) '$(srcdir)/nu_logger.cc'; fi`
+
+vnddvpnd-nu_console.o: nu_console.cc
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(vnddvpnd_CXXFLAGS) $(CXXFLAGS) -MT vnddvpnd-nu_console.o -MD -MP -MF $(DEPDIR)/vnddvpnd-nu_console.Tpo -c -o vnddvpnd-nu_console.o `test -f 'nu_console.cc' || echo '$(srcdir)/'`nu_console.cc
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/vnddvpnd-nu_console.Tpo $(DEPDIR)/vnddvpnd-nu_console.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='nu_console.cc' object='vnddvpnd-nu_console.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(vnddvpnd_CXXFLAGS) $(CXXFLAGS) -c -o vnddvpnd-nu_console.o `test -f 'nu_console.cc' || echo '$(srcdir)/'`nu_console.cc
+
+vnddvpnd-nu_console.obj: nu_console.cc
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(vnddvpnd_CXXFLAGS) $(CXXFLAGS) -MT vnddvpnd-nu_console.obj -MD -MP -MF $(DEPDIR)/vnddvpnd-nu_console.Tpo -c -o vnddvpnd-nu_console.obj `if test -f 'nu_console.cc'; then $(CYGPATH_W) 'nu_console.cc'; else $(CYGPATH_W) '$(srcdir)/nu_console.cc'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/vnddvpnd-nu_console.Tpo $(DEPDIR)/vnddvpnd-nu_console.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='nu_console.cc' object='vnddvpnd-nu_console.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(vnddvpnd_CXXFLAGS) $(CXXFLAGS) -c -o vnddvpnd-nu_console.obj `if test -f 'nu_console.cc'; then $(CYGPATH_W) 'nu_console.cc'; else $(CYGPATH_W) '$(srcdir)/nu_console.cc'; fi`
+
+vnddvpnd-nu_terminal.o: nu_terminal.cc
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(vnddvpnd_CXXFLAGS) $(CXXFLAGS) -MT vnddvpnd-nu_terminal.o -MD -MP -MF $(DEPDIR)/vnddvpnd-nu_terminal.Tpo -c -o vnddvpnd-nu_terminal.o `test -f 'nu_terminal.cc' || echo '$(srcdir)/'`nu_terminal.cc
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/vnddvpnd-nu_terminal.Tpo $(DEPDIR)/vnddvpnd-nu_terminal.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='nu_terminal.cc' object='vnddvpnd-nu_terminal.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(vnddvpnd_CXXFLAGS) $(CXXFLAGS) -c -o vnddvpnd-nu_terminal.o `test -f 'nu_terminal.cc' || echo '$(srcdir)/'`nu_terminal.cc
+
+vnddvpnd-nu_terminal.obj: nu_terminal.cc
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(vnddvpnd_CXXFLAGS) $(CXXFLAGS) -MT vnddvpnd-nu_terminal.obj -MD -MP -MF $(DEPDIR)/vnddvpnd-nu_terminal.Tpo -c -o vnddvpnd-nu_terminal.obj `if test -f 'nu_terminal.cc'; then $(CYGPATH_W) 'nu_terminal.cc'; else $(CYGPATH_W) '$(srcdir)/nu_terminal.cc'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/vnddvpnd-nu_terminal.Tpo $(DEPDIR)/vnddvpnd-nu_terminal.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='nu_terminal.cc' object='vnddvpnd-nu_terminal.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(vnddvpnd_CXXFLAGS) $(CXXFLAGS) -c -o vnddvpnd-nu_terminal.obj `if test -f 'nu_terminal.cc'; then $(CYGPATH_W) 'nu_terminal.cc'; else $(CYGPATH_W) '$(srcdir)/nu_terminal.cc'; fi`
 
 # This directory's subdirectories are mostly independent; you can cd
 # into them and run 'make' without going through this Makefile.
