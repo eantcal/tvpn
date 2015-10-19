@@ -56,7 +56,7 @@ namespace nu
 
 /* -------------------------------------------------------------------------- */
 
-template <class T> class base_stream 
+template <class T=std::string> class base_stream 
 {
    public:
       virtual bool eof() const noexcept = 0;
@@ -64,7 +64,10 @@ template <class T> class base_stream
       virtual ~base_stream() noexcept {}
 };
 
-template <class T> class string_stream : public nu::base_stream<T> 
+
+/* -------------------------------------------------------------------------- */
+
+template <class T=std::string> class string_stream : public nu::base_stream<T> 
 {
    private:
       T _line;
@@ -129,16 +132,18 @@ template <class T> class string_stream : public nu::base_stream<T>
 };
 
 
-template <class T> class file_stream : public base_stream<T> 
+/* -------------------------------------------------------------------------- */
+
+template <class T = std::string> class file_stream : public base_stream<T> 
 {
    private:
-      T _filename;
+      std::string _filename;
       FILE* _fstrm;
 
    public:
       enum { MAX_LINE_LEN = NU_TKNZR_MAX_LINE_LEN };
 
-      file_stream( const T & filename ) noexcept : 
+      file_stream( const std::string & filename ) noexcept : 
          _filename(filename),
          _fstrm(0)
          { }
@@ -216,7 +221,10 @@ template <class T> class file_stream : public base_stream<T>
       }
 };    
 
-template <class T> class tokenizer_t 
+
+/* -------------------------------------------------------------------------- */
+
+template <class T=std::string> class tokenizer_t 
 {
    public:
       enum token_class_t {
@@ -230,7 +238,7 @@ template <class T> class tokenizer_t
          TOKEN_CLASS_CNT
       };
 
-      typedef std::set< T > token_class_set_t;
+      using token_class_set_t = std::set< T >;
 
    private:
       base_stream<T> & _strm;
@@ -295,7 +303,8 @@ template <class T> class tokenizer_t
    private:
       token_t _last_processed_token;
 
-      typedef std::list< token_t > _rtoken_list_t;
+      using _rtoken_list_t = std::list< token_t >;
+
       bool _rtoken_enable;
       _rtoken_list_t _rtoken_list;
       typename _rtoken_list_t::const_iterator _rtoken_list_it;
@@ -316,7 +325,7 @@ template <class T> class tokenizer_t
          _rtoken_enable(false),
          _rtoken_list(),
          _rtoken_list_it (_rtoken_list.begin())
-   {}    
+      {}    
 
       T get_current_line_buf() const noexcept
       { return _current_line_buf; }

@@ -31,6 +31,7 @@
 #include "vndd_tunnel.h"
 #include "udp_socket.h"
 #include "nu_console.h"
+#include "nu_tokenizer.h"
 
 #include <sys/ioctl.h>
 #include <sys/types.h>
@@ -191,6 +192,10 @@ static void wait_for_termination()
 
 class cli_t
 {
+   private:
+      using nu_tokenizer_t = nu::tokenizer_t<>;
+      nu_tokenizer_t::token_class_set_t _blnks;
+
    public:
       cli_t() 
       {
@@ -201,13 +206,9 @@ class cli_t
          sigaddset(&newmask, SIGTERM);
 
          sigprocmask(SIG_BLOCK, &newmask, NULL); 
-      }
 
-      void help()
-      {
-         std::cout << "help\tThis help" << std::endl;
-         std::cout << "quit\tQuit program" << std::endl;
-         std::cout << "usage\tProgram command line usage" << std::endl;
+         _blnks.insert(" ");
+         _blnks.insert("\t");
       }
 
       void run()
@@ -221,6 +222,10 @@ class cli_t
 
             std::string cmd = console.input_line();
 
+            std::vector< std::string > argv;
+
+            parse_cmd_line(cmd, argv);
+      
             if (cmd == "quit")
                return;
             else if (cmd == "help")
@@ -233,6 +238,49 @@ class cli_t
             std::cout.flush();
          }
       }
+
+   protected:
+      void help()
+      {
+         std::cout << "help\tThis help" << std::endl;
+         std::cout << "quit\tQuit program" << std::endl;
+         std::cout << "usage\tProgram command line usage" << std::endl;
+      }
+
+      void parse_cmd_line( const std::string& cmd_line, std::vector< std::string > & argv )
+      {  
+         nu::string_stream<> ss(cmd_line);
+         nu_tokenizer_t tknzr(ss);
+         tknzr.register_token_blank( _blnks );
+
+         nu_tokenizer_t::token_t token;
+
+         bool parse_loop = true;
+
+         while ( parse_loop ) 
+         {
+            token.value = "";
+
+            parse_loop = tknzr.get_next_token( token );
+
+            if ( token.tkncls == nu_tokenizer_t::EMPTY_LINE ||
+                 token.tkncls == nu_tokenizer_t::LINESTYLE_COMMENT ||
+                 token.tkncls == nu_tokenizer_t::BLANK ) 
+            {
+               //skip empty line or line-style comment
+               continue;
+            }
+
+            if ( token.tkncls == nu_tokenizer_t::END_OF_STREAM ) 
+            {
+               // no more token
+               break;
+            }
+
+            argv.push_back(token.value);
+         }     
+      }
+
 };
 
 
