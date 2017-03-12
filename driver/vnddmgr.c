@@ -71,6 +71,10 @@ MODULE_PARM_DESC(dbglevel, "vnddfmgr debug level (0-disabled)");
    struct semaphore name = __SEMAPHORE_INITIALIZER(name, 1)
 #endif
 
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(4,5,0)
+#define NETIF_F_GEN_CSUM NETIF_F_HW_CSUM
+#endif
+
 
 /* -------------------------------------------------------------------------- */
 /* Hash table definition                                                      */
@@ -633,7 +637,11 @@ static int netdev_tx(struct sk_buff *skb, struct net_device *dev)
    BUG_ON (!data || len<=0);
 
    /* save the timestamp */
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(4,7,1)
+   netif_trans_update(dev);
+#else
    dev->trans_start = jiffies; 
+#endif
 
    /* skb will be freed by netdev_cdev_qsend */
    priv->skb = skb;

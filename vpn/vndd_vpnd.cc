@@ -55,7 +55,6 @@
 #include <set>
 #include <sstream>
 #include <algorithm>
-#include <memory>
 #include <stdio.h>
 #include <assert.h>
 
@@ -421,7 +420,7 @@ int main(int argc, char* argv[])
    }
 
    // Create a tunnel manager instance
-   std::auto_ptr<vndd::tunnelmgr_t> tmgr ( new vndd::tunnelmgr_t() );
+   std::unique_ptr<vndd::tunnelmgr_t> tmgr ( new vndd::tunnelmgr_t() );
 
    if (must_daemonize) 
       daemonize ( vndd::setup_t::lockfilename.c_str() );
