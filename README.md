@@ -32,7 +32,7 @@ For example, using a Debian/Ubuntu distros open the Terminal and then type the f
 Example: Using TVPN to can create tunnels to connect private networks across public networks (Internet).
 Consider the following sample scenario:
 
-![alt text](https://7bcac53c-a-62cb3a1a-s-sites.googlegroups.com/site/eantcal/home/c/creating-tiny-vpn/vpnfigura5.jpg?attachauth=ANoY7cqqXhAH6qcveOrt8n_uB3qIaUWKndED_wANzqkwOZgRhvAnLjQMF5o6u0JGvK8Hbux1tJl-8Ip1JlOscvDCfgClNhm0-r2YhLL0n3OiTt-xK2DEMz11fWZpf6FaflhzJoAUkRFBnxoO5x7t9j8zskn-oRdNpXlRnVRsfmIT9hut_FQ4QtXU5HjCvpAs1TjQE64s9e1yQKI4UsPn2Nmz5llL0Mf0e9wZ6MNaP44uLNpk4KpfLypc_3vzA4o_EBa_KG8GrAtp&attredirects=0 "Scenario")
+![alt text](http://www.eantcal.eu/archive/creating-tiny-vpn/vpnfigura5.jpg?attredirects=0)
 
 - H1 and H2 are two hosts on which TVPN framework is installed, in particular:
 - LAN 1 is C class network with the address 192.168.1.0/24.
