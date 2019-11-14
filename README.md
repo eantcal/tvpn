@@ -1,13 +1,13 @@
 # tvpn
-TVPN is an open source software application that implements virtual private network techniques for creating p2p or site2site connection configurations.
+tVPN is an open source software application that implements virtual private network techniques for creating p2p or site2site connection configurations.
 
-You can compile TVPN code using GCC (to generate user space tools g++ 4.8.1 or higher is required).
-- TVPN works on GNU/Linux distributions based on kernel since version 2.6.38
-- TVPN relies on Vnddmgr which is an alternative network device driver similar to Linux TAP (namely network tap). 
+You can compile tVPN code using GCC (to generate user space tools g++ 4.8.1 or higher is required).
+- tVPN works on GNU/Linux distributions based on kernel since version 2.6.38
+- tVPN relies on Vnddmgr which is an alternative network device driver similar to Linux TAP (namely network tap). 
   - Vnddmgr simulates a link layer device and it operates with layer 2 packets like Ethernet frames. Packets sent by an operating system via a Vnddmgr virtual devices are delivered to a user-space program which attaches itself to the device. 
 A user-space program may also pass packets into a vnddmgr device. In this case the vnddmgr device delivers (or "injects") these packets to the operating-system network stack thus emulating their reception from an external source.
 
-## Building TVPN
+## Building tVPN
 
 - Getting the latest released code. 
 - Download and uncompress it.
@@ -22,19 +22,19 @@ cd ..
 make
 ```
 
-## Prerequisites for building TVPN
-To build TVPN on Linux you need to install GNU g++ compiler and kernel headers.
+## Prerequisites for building tVPN
+To build tVPN on Linux you need to install GNU g++ compiler and kernel headers.
 For example, using a Debian/Ubuntu distros open the Terminal and then type the following apt-get command as root user:
 ```
    sudo apt-get install build-essential linux-headers-$(uname -r)
 ```
 
-Example: Using TVPN to can create tunnels to connect private networks across public networks (Internet).
+Example: Using tVPN to can create tunnels to connect private networks across public networks (Internet).
 Consider the following sample scenario:
 
 ![alt text](https://github.com/eantcal/tvpn/blob/master/Vlan3.jpg?raw=true)
 
-- H1 and H2 are two hosts on which TVPN framework is installed, in particular:
+- H1 and H2 are two hosts on which tVPN framework is installed, in particular:
 - LAN 1 is C class network with the address 192.168.1.0/24.
 - LAN 2 is C class network with the address 192.168.2.0/24.
 - H1 a host with two network interfaces: one configured with a public IP address 120.0.0.1 and the other with a private address 192.168.1.254.
