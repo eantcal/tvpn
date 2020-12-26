@@ -139,7 +139,7 @@ static void hash_insert(
       hash_data_ptr_t data_ptr);
 static int hash_remove(hash_tbl_t* hash_p, hash_key_t key); 
 static hash_item_t* hash_search(hash_tbl_t* hash_p, hash_key_t key);
-static int hash_for_each(hash_tbl_t * hash_p, hash_iterator_t it);
+static int hash_4each(hash_tbl_t * hash_p, hash_iterator_t it);
 static size_t hash_fnc(hash_key_t key);
 #define hash_key_assign(_KEY1,_KEY2) strncpy(_KEY1,_KEY2, HASH_KEY_SIZE-1)
 #define hash_key_equals(_KEY1,_KEY2) (strcmp(_KEY1,_KEY2)==0)
@@ -1391,7 +1391,7 @@ static void hash_destructor( hash_tbl_t* hash_p )
 
 /* -------------------------------------------------------------------------- */
 
-static int hash_for_each( hash_tbl_t * hash_p, hash_iterator_t it ) 
+static int hash_4each( hash_tbl_t * hash_p, hash_iterator_t it ) 
 {
    size_t i = 0;
 
@@ -1681,7 +1681,7 @@ static void __exit module_vnddmgr_cleanup(void)
 
    unregister_chrdev_region(_vnddmgr_cdev_no, MAX_CDEV_INSTANCES);
 
-   hash_for_each( & g_vnddmgr.hash_tbl, hash_free_netdev );
+   hash_4each( & g_vnddmgr.hash_tbl, hash_free_netdev );
    hash_destructor ( & g_vnddmgr.hash_tbl );
    pkt_queue_destructor( & (g_vnddmgr.cdev_pkt_queue) ); 
 }

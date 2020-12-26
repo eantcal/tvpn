@@ -3,7 +3,10 @@
 cd driver
 ./clean.sh
 make && cd ..
-./autogen.sh
-./configure && make
 
+mkdir -p build
+cd build
+cmake ..
+make
+cd -
 

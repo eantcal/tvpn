@@ -18,7 +18,9 @@ cd driver
 ./clean.sh
 make
 cd ..
-./configure
+mkdir build
+cd build
+cmake ..
 make
 ```
 
@@ -46,7 +48,7 @@ The choice of addresses is random and made to illustrate the example, so replace
 Taking into account the above scenario, let us take an example of the configuration of hosts H1 and H2 in order to create the virtual LAN 3.
 
 First we have to create virtual interfaces (let's call it vlan3) on both the hosts using the same command:
-sudo vnddconfig add vlan3
+sudo vpndcfg add vlan3
 The previous operation is permissible since the namespace of the interface is confined to each host.
 After we have to configure the virtual interfaces. 
 To configure H1, we may use the following command:
@@ -59,22 +61,22 @@ And similarly for H2:
 sudo ifconfig vlan3 192.168.3.2
 ```
 Alternatively, you can create interfaces as broadcast. In this case you need to give different mac address to the VLAN3 interface, leaving ARP eanbled or statically updating the ARP cache of each host.
-Once the creation of virtual interfaces, you can create the tunnels running on both hosts the program vnddvpnd.
+Once the creation of virtual interfaces, you can create the tunnels running on both hosts the program vpnd.
 
 On H1 you can use the command:
 ```
-sudo vnddvpnd -tunnel vlan3 120.0.0.1 33000 120.0.0.2 33000
+sudo vpnd -tunnel vlan3 120.0.0.1 33000 120.0.0.2 33000
 ```
 And similarly on the H2:
 ```
-sudo vnddvpnd -tunnel vlan3 120.0.0.2 33000 120.0.0.1 33000 
+sudo vpnd -tunnel vlan3 120.0.0.2 33000 120.0.0.1 33000 
 ```
 Even if the port 33000 was chosen arbitrarily, in general , that choice should take into account the configuration of the system, the firewall configuration and etc.
 
-The vnddvpnd program can be run as a service by specifying the optional parameter "-daemonize".
+The vpnd program can be run as a service by specifying the optional parameter "-daemonize".
 To obtain that the connection of the tunnel is encrypted you can use the parameter "-pwd" followed by the string used as key of DES, which must be the same for H1 and H2.
 
-The full list of parameters accepted by vnddvpnd and vnddconfig can be obtained by running these programs without arguments.
+The full list of parameters accepted by vpnd and vpndcfg can be obtained by running these programs without arguments.
 To allow H1 and H2 be the gateway for the respective sub-networks, we need to enable IP forwarding.
 This can be achieved by writing "1" in the entry "/proc/sys/net/ipv4/ip_forward" in the /proc file system, using (for example) the command:
 ```
