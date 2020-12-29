@@ -7,7 +7,7 @@ You can compile tVPN code using GCC (to generate user space tools g++ 4.8.1 or h
   - Vnddmgr simulates a link layer device and it operates with layer 2 packets like Ethernet frames. Packets sent by an operating system via a Vnddmgr virtual devices are delivered to a user-space program which attaches itself to the device. 
 A user-space program may also pass packets into a vnddmgr device. In this case the vnddmgr device delivers (or "injects") these packets to the operating-system network stack thus emulating their reception from an external source.
 
-## Building tVPN
+### Building tVPN
 
 - Getting the latest released code. 
 - Download and uncompress it.
@@ -24,13 +24,14 @@ cmake ..
 make
 ```
 
-## Prerequisites for building tVPN
+### Prerequisites for building tVPN
 To build tVPN on Linux you need to install GNU g++ compiler and kernel headers.
 For example, using a Debian/Ubuntu distros open the Terminal and then type the following apt-get command as root user:
 ```
    sudo apt-get install build-essential linux-headers-$(uname -r)
 ```
 
+### Using tVPN to can create a VPN.
 Example: Using tVPN to can create tunnels to connect private networks across public networks (Internet).
 Consider the following sample scenario:
 
