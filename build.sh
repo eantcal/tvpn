@@ -2,7 +2,8 @@
 
 cd driver
 ./clean.sh
-make && cd ..
+./build.sh
+cd ..
 
 mkdir -p build
 cd build
